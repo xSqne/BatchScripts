@@ -1,5 +1,5 @@
 @echo off
-
+setlocal EnableDelayedExpansion
 if "%~1"=="" (
 	echo Please provide a path!
 	exit /b
@@ -27,13 +27,20 @@ if "%driveCheck%"==":\" (findstr /R /C:".*" /N temp1.txt | find /N "6:" | find "
 
 for /F "tokens=1,2,3,4,5" %%A in (temp2.txt) do (
 	set initial=%%A
-	set final=%initial:~5%
+	set final=!initial:~5!
 	
-	echo The oldest file/folder is %%E, created on %final% at %%B %%C
-	if "%%D"=="<^DIR>" (echo The path is %~1%%E) else (echo The path is %~1\%%E)
+	echo "<^DIR>"
+	if "%%D"=="<^DIR>" (
+	echo The path is %~1%%E
+	echo The oldest folder is %%E, created on !final! at %%B %%C
+	) else (
+	echo The path is %~1\%%E
+	echo The oldest file is %%E, created on !final! at %%B %%C
+	)
 )
 
 del /Q temp1.txt temp2.txt
 
 echo.
 dir %1 /o:d /t:c 
+endlocal
